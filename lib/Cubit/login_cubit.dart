@@ -1,10 +1,9 @@
-import 'dart:js';
-
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugaswpfront/Screens/Admin/admin_screen.dart';
 import 'package:tugaswpfront/Screens/Auth/login_auth.dart';
 import 'package:tugaswpfront/Screens/User/user_screen.dart';
@@ -45,6 +44,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void loginUser(BuildContext context, String email, String password) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       var response = await Dio().post(baseURL + "login",
           data: FormData.fromMap({
             "email": email,
@@ -58,9 +58,13 @@ class AuthCubit extends Cubit<AuthState> {
       if (response.statusCode == 200) {
         emit(SuccessAuth(response.data["message"]));
         if (response.data["role"] == 0) {
+          prefs.setString("token", "sc1#1");
+          prefs.setInt("id", response.data["id"]);
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => const UserPage()));
         } else {
+          prefs.setString("token", "sc1#1");
+          prefs.setInt("id", response.data["id"]);
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => const AdminPage()));
         }
@@ -89,7 +93,8 @@ class AuthCubit extends Cubit<AuthState> {
               }));
       if (response.statusCode == 200) {
         emit(SuccessRegister(response.data["message"]));
-        Navigator.push(context, MaterialPageRoute(builder: (_) => LoginAuth()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const LoginAuth()));
       } else if (response.statusCode != 200) {
         emit(FailedRegister(response.data["message"]));
       }
