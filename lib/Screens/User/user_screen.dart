@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugaswpfront/Cubit/product_cubit.dart';
+import 'package:tugaswpfront/Screens/User/history_pembelian.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);
@@ -16,6 +17,12 @@ class _UserPageState extends State<UserPage> {
   Timer? _timer;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
@@ -24,6 +31,8 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ProductCubit>().loadProduct();
+
     return Scaffold(
         body: SafeArea(
       child: SingleChildScrollView(
@@ -32,27 +41,41 @@ class _UserPageState extends State<UserPage> {
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
-                onPressed: () {}, icon: const Icon(Icons.notifications_none)),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const HistoryPembelian()));
+                },
+                icon: const Icon(Icons.notifications_none)),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text("Product List",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 20,
           ),
           BlocBuilder<ProductCubit, ProductEvent>(builder: (context, state) {
             if (state is LoadingProduct) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             } else if (state is SuccessLoadProduct) {
               return ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
+                  itemCount: state.data["data"].length,
                   itemBuilder: (ctx, index) {
-                    return ListTile(
-                        title: Text(state.data["data"][index]["name"]),
+                    return Card(
+                      child: ListTile(
+                        title: Text(state.data["data"][index]["nama_produk"]),
                         trailing: ElevatedButton(
                             onPressed: () async {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               context.read<ProductCubit>().createProduct(
                                   state.data["data"][index]["id"],
-                                  prefs.getString("id"));
+                                  prefs.getInt("id"));
                               showDialog(
                                   context: context,
                                   builder: (_) {
@@ -67,8 +90,8 @@ class _UserPageState extends State<UserPage> {
                                   });
                             },
                             child: const Text("Pesan")),
-                        subtitle:
-                            Text(state.data["data"][index]["description"]));
+                      ),
+                    );
                   });
             } else {
               return const SizedBox();

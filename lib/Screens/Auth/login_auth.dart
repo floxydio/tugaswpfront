@@ -35,6 +35,9 @@ class _LoginAuthState extends State<LoginAuth> {
           padding: const EdgeInsets.only(left: 15.0, right: 15.0),
           child: Column(
             children: [
+              SizedBox(
+                height: 50,
+              ),
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(

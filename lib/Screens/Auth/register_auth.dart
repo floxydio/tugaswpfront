@@ -86,13 +86,11 @@ class _RegisterAuthState extends State<RegisterAuth> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        context.read<AuthCubit>().registerUser(
-                            context,
-                            namaController.text,
-                            emailController.text,
-                            passwordController.text);
-                      }
+                      context.read<AuthCubit>().registerUser(
+                          context,
+                          namaController.text.toString(),
+                          emailController.text.toString(),
+                          passwordController.text.toString());
                     },
                     child: const Text("Sign Up")),
               ),

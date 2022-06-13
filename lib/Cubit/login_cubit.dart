@@ -40,33 +40,35 @@ class FailedRegister extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
-  String baseURL = "http://localhost:8000/api/";
+  var baseLink = "http://localhost:2000";
 
   void loginUser(BuildContext context, String email, String password) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var response = await Dio().post(baseURL + "login",
+      var response = await Dio().post(baseLink + "/login",
           data: FormData.fromMap({
             "email": email,
             "password": password,
           }),
           options: Options(
-              followRedirects: false,
+              followRedirects: true,
               validateStatus: (status) {
                 return status! < 500;
               }));
+
+      print(response.data);
       if (response.statusCode == 200) {
         emit(SuccessAuth(response.data["message"]));
         if (response.data["role"] == 0) {
           prefs.setString("token", "sc1#1");
-          prefs.setInt("id", response.data["id"]);
+          prefs.setInt("id", response.data["data"]["id"]);
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => const UserPage()));
         } else {
           prefs.setString("token", "sc1#1");
-          prefs.setInt("id", response.data["id"]);
+          prefs.setInt("id", response.data["data"]["id"]);
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const AdminPage()));
+              context, MaterialPageRoute(builder: (_) => const UserPage()));
         }
       } else if (response.statusCode != 200) {
         emit(FailedAuth(response.data["message"]));
@@ -78,9 +80,13 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void registerUser(BuildContext context, nama, email, password) async {
+  void registerUser(
+      BuildContext context, String nama, String email, String password) async {
+    print(nama);
+    print(email);
+    print(password);
     try {
-      var response = await Dio().post(baseURL + "register",
+      var response = await Dio().post(baseLink + "/register",
           data: FormData.fromMap({
             "nama": nama,
             "email": email,

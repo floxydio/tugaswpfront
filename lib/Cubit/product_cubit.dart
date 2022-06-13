@@ -31,10 +31,12 @@ class SuccessLoadProduct extends ProductEvent {
 class ProductCubit extends Cubit<ProductEvent> {
   ProductCubit() : super(ProductInitial());
 
+  var baseLink = "http://localhost:2000";
+
   void loadProduct() async {
     emit(LoadingProduct());
     try {
-      var response = await Dio().get("/products",
+      var response = await Dio().get("$baseLink/products",
           options: Options(
               followRedirects: false,
               validateStatus: (status) {
@@ -49,7 +51,9 @@ class ProductCubit extends Cubit<ProductEvent> {
   }
 
   void createProduct(productId, userId) async {
-    var response = await Dio().post("/product-history",
+    print(productId);
+    print(userId);
+    var response = await Dio().post("$baseLink/product-history",
         data: FormData.fromMap({"user_id": userId, "product_id": productId}),
         options: Options(
             followRedirects: false,
@@ -62,7 +66,7 @@ class ProductCubit extends Cubit<ProductEvent> {
   void historyProductByUser(id) async {
     emit(LoadingHistoryProduct());
     try {
-      var response = await Dio().get("/product-history/$id");
+      var response = await Dio().get("$baseLink/product-history/$id");
       if (response.statusCode == 200) {
         emit(SuccessHistoryProduct(response.data));
       }
