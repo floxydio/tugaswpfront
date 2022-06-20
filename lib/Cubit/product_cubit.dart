@@ -31,7 +31,7 @@ class SuccessLoadProduct extends ProductEvent {
 class ProductCubit extends Cubit<ProductEvent> {
   ProductCubit() : super(ProductInitial());
 
-  var baseLink = "http://localhost:2000";
+  var baseLink = "http://192.168.43.6:2000";
 
   void loadProduct() async {
     emit(LoadingProduct());
@@ -43,6 +43,7 @@ class ProductCubit extends Cubit<ProductEvent> {
                 return status! < 500;
               }));
       if (response.statusCode == 200) {
+        print(response.data);
         emit(SuccessLoadProduct(response.data));
       }
     } catch (e) {

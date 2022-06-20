@@ -20,6 +20,8 @@ class _UserPageState extends State<UserPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    context.read<ProductCubit>().loadProduct();
   }
 
   @override
@@ -29,18 +31,18 @@ class _UserPageState extends State<UserPage> {
     _timer?.cancel();
   }
 
+  var baseLink = "http://192.168.43.6:2000";
+
   @override
   Widget build(BuildContext context) {
-    context.read<ProductCubit>().loadProduct();
-
     return Scaffold(
-        body: SafeArea(
-      child: SingleChildScrollView(
-          child: Column(
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
+        appBar: CustomAppBar(
+          height: 100,
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text("BuahPedia",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            IconButton(
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -48,57 +50,175 @@ class _UserPageState extends State<UserPage> {
                           builder: (_) => const HistoryPembelian()));
                 },
                 icon: const Icon(Icons.notifications_none)),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text("Product List",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(
-            height: 20,
-          ),
-          BlocBuilder<ProductCubit, ProductEvent>(builder: (context, state) {
-            if (state is LoadingProduct) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is SuccessLoadProduct) {
-              return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: state.data["data"].length,
-                  itemBuilder: (ctx, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(state.data["data"][index]["nama_produk"]),
-                        trailing: ElevatedButton(
-                            onPressed: () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              context.read<ProductCubit>().createProduct(
-                                  state.data["data"][index]["id"],
-                                  prefs.getInt("id"));
-                              showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    _timer =
-                                        Timer(const Duration(seconds: 3), () {
-                                      Navigator.of(context).pop();
-                                    });
+          ]),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+              child: Column(
+            children: [
+              BlocBuilder<ProductCubit, ProductEvent>(
+                  builder: (context, state) {
+                if (state is LoadingProduct) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is SuccessLoadProduct) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            decoration: InputDecoration(
+                                hintText: "Mau Cari apa hari ini....",
+                                border: OutlineInputBorder(),
+                                suffixIcon: Icon(Icons.search)),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          const Text("Rekomendasi Buah",
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              physics: const ScrollPhysics(),
+                              child: Row(
+                                children: [
+                                  for (int index = 0; index < 3; index++)
+                                    Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Image.network(
+                                            baseLink +
+                                                "/products/" +
+                                                state.data["data"][index]
+                                                    ["image"],
+                                            width: 150,
+                                            height: 120,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                              state.data["data"][index]
+                                                  ["nama_produk"],
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600)),
+                                          Text(
+                                              state.data["data"][index]["harga"]
+                                                  .toString(),
+                                              textAlign: TextAlign.right,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey)),
+                                          SizedBox(
+                                            width: 150,
+                                            child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.orange),
+                                                onPressed: () {},
+                                                child: const Text("Pesan")),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          const Text("Buah Termurah",
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: const ScrollPhysics(),
+                            child: Row(
+                              children: [
+                                for (int index = 0; index < 3; index++)
+                                  Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.network(
+                                          baseLink +
+                                              "/products/" +
+                                              state.data["data"][index]
+                                                  ["image"],
+                                          width: 150,
+                                          height: 120,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                            state.data["data"][index]
+                                                ["nama_produk"],
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600)),
+                                        Text(
+                                            state.data["data"][index]["harga"]
+                                                .toString(),
+                                            textAlign: TextAlign.right,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.grey)),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        SizedBox(
+                                          width: 150,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  primary: Colors.orange),
+                                              onPressed: () {},
+                                              child: const Text("Pesan")),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                        ]),
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              }),
+            ],
+          )),
+        ));
+  }
+}
 
-                                    return const AlertDialog(
-                                      content: Text("Berhasil Pesan"),
-                                    );
-                                  });
-                            },
-                            child: const Text("Pesan")),
-                      ),
-                    );
-                  });
-            } else {
-              return const SizedBox();
-            }
-          }),
-        ],
-      )),
-    ));
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Widget child;
+  final double height;
+
+  CustomAppBar({
+    required this.child,
+    this.height = kToolbarHeight,
+  });
+
+  @override
+  Size get preferredSize => Size.fromHeight(height);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: preferredSize.height,
+      color: Colors.orange,
+      alignment: Alignment.center,
+      child: child,
+    );
   }
 }

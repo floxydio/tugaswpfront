@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tugaswpfront/Cubit/cekauth_cubit.dart';
 import 'package:tugaswpfront/Cubit/login_cubit.dart';
 import 'package:tugaswpfront/Cubit/product_cubit.dart';
+import 'package:tugaswpfront/Screens/Auth/login_auth.dart';
 
 void main() => runApp(MultiBlocProvider(
         providers: [
@@ -29,7 +30,8 @@ class _BoardingScreenState extends State<BoardingScreen> {
   void initState() {
     super.initState();
     cekLogin = Timer.periodic(const Duration(seconds: 1), (timer) {
-      context.read<TokenCubit>().checkLoginIfAvailable(context);
+      // context.read<TokenCubit>().checkLoginIfAvailable(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginAuth()));
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tugaswpfront/Cubit/login_cubit.dart';
 import 'package:tugaswpfront/Screens/Auth/register_auth.dart';
 
@@ -35,8 +36,15 @@ class _LoginAuthState extends State<LoginAuth> {
           padding: const EdgeInsets.only(left: 15.0, right: 15.0),
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 50,
+              ),
+              SvgPicture.asset(
+                "assets/login.svg",
+                height: 300,
+              ),
+              const SizedBox(
+                height: 30,
               ),
               TextFormField(
                 controller: emailController,

@@ -40,7 +40,7 @@ class FailedRegister extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
-  var baseLink = "http://localhost:2000";
+  var baseLink = "http://192.168.43.6:2000";
 
   void loginUser(BuildContext context, String email, String password) async {
     try {
