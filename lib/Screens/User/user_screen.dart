@@ -31,7 +31,7 @@ class _UserPageState extends State<UserPage> {
     _timer?.cancel();
   }
 
-  var baseLink = "http://192.168.43.6:2000";
+  var baseLink = "http://192.168.8.26:2000";
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,26 @@ class _UserPageState extends State<UserPage> {
                                             child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
                                                     primary: Colors.orange),
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  print(prefs.getInt("id"));
+                                                  context
+                                                      .read<ProductCubit>()
+                                                      .createProduct(
+                                                          state.data["data"]
+                                                              [index]["id"],
+                                                          prefs.getInt("id"));
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (_) => AlertDialog(
+                                                          title: const Text(
+                                                              "Berhasil Melakukan Pemesanan",
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14))));
+                                                },
                                                 child: const Text("Pesan")),
                                           )
                                         ],

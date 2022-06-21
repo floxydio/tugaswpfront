@@ -31,7 +31,7 @@ class SuccessLoadProduct extends ProductEvent {
 class ProductCubit extends Cubit<ProductEvent> {
   ProductCubit() : super(ProductInitial());
 
-  var baseLink = "http://192.168.43.6:2000";
+  var baseLink = "http://192.168.8.26:2000";
 
   void loadProduct() async {
     emit(LoadingProduct());
@@ -68,6 +68,7 @@ class ProductCubit extends Cubit<ProductEvent> {
     emit(LoadingHistoryProduct());
     try {
       var response = await Dio().get("$baseLink/product-history/$id");
+      print(response.data);
       if (response.statusCode == 200) {
         emit(SuccessHistoryProduct(response.data));
       }
